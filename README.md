@@ -1,18 +1,18 @@
-# 🔒 Security Audit Automation
+# Security Audit Automation
 
 Automated dependency audit for Yarn v2+ projects on Bitbucket. Runs `yarn npm audit`, updates vulnerable packages, and creates or updates a Pull Request.
 
-> 📖 Companion code for [Dependabot for Bitbucket: building a security audit pipeline](https://melkord.github.io/dependabot-bitbucket-security-audit/).
+> Companion code for [Dependabot for Bitbucket: building a security audit pipeline](https://melkord.github.io/dependabot-bitbucket-security-audit/).
 
 ---
 
-## 🏗 Architecture
+## Architecture
 
 The entire script lives in a single `index.ts` file. This is intentional: the script is meant to run inside a CI pipeline step, where you want the smallest possible footprint. No build step, no bundling, no compiled output to manage. The pipeline installs dependencies, runs the script with `ts-node`, and that's it. Keeping everything in one file also makes it straightforward to copy and adapt to your own project without importing a library or wiring up a plugin system.
 
 ---
 
-## ⚙️ Requirements
+## Requirements
 
 The **target project** (the one being audited) must use Yarn Berry (v2+), since the script runs `yarn npm audit` and `yarn up` internally.
 
@@ -22,7 +22,7 @@ The script itself requires:
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
 ### Required
 
@@ -44,7 +44,7 @@ The script itself requires:
 
 ---
 
-## 🚀 Usage
+## Usage
 
 ### Bitbucket Pipelines
 
@@ -55,8 +55,8 @@ pipelines:
       - step:
           name: Security Audit
           script:
-            - yarn install
-            - npx ts-node index.ts
+            - npm install --prefix /path/to/security-audit-bot
+            - npx --prefix /path/to/security-audit-bot ts-node index.ts
 ```
 
 > The env vars above (`AUDIT_BITBUCKET_TOKEN`, `AUDIT_BITBUCKET_WORKSPACE`, `AUDIT_BITBUCKET_REPO`) must be set as [repository variables](https://support.atlassian.com/bitbucket-cloud/docs/variables-and-secrets/) in Bitbucket.
@@ -78,7 +78,7 @@ AUDIT_DRY_RUN=true npm start
 
 ---
 
-## 🔄 Workflow
+## Workflow
 
 1. Checkout base branch (default: `develop`)
 2. Run `yarn npm audit --all --severity <level> --json`
@@ -90,20 +90,20 @@ AUDIT_DRY_RUN=true npm start
 
 ---
 
-## ⚠️ Notes
+## Notes
 
 * Some vulnerabilities come from **transitive dependencies** and cannot be fixed directly. The script reports these separately in the PR.
 * The script uses `yarn up`, which updates to the latest version within the semver range. This may introduce breaking changes.
 
 ---
 
-## 📌 Limitations
+## Limitations
 
 * Bitbucket only (no GitHub/GitLab support)
 * Relies on Yarn v2+ audit output format
 
 ---
 
-## 📄 License
+## License
 
 MIT
